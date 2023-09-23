@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sleep 360
+uwsgi --ini uwsgi.ini

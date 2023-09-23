@@ -11,26 +11,28 @@ ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
 
 # Create new user and set workdir
-RUN useradd --create-home rinha_backend
+RUN useradd --create-home rinha_backend --groups www-data
 USER 1000
 WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 
 # Install project dependences
 COPY ./requirements.txt /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt
 RUN python -m venv venv
-RUN source venv/bin/activate
 ENV PATH="/home/rinha_backend/rinha-de-backend-2023-q3-python-flask/venv/bin:$PATH"
 RUN pip install -r /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt
 
 # Copy source code to container
 COPY . /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 
-# Set workdir from src/
+# Set workdir from src/ and
 WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/src
+USER root
+RUN chmod +x init.sh
+USER 1000
 
 # Set entrypoint and run python project
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["wait-for-it -h rinha_backend_redis_db -p 6379 --strict --timeout=300 -- \
       wait-for-it -h rinha_backend_postgres_db -p 5432 --strict --timeout=300 -- \
-      wait-for-it -h rinha_backend_nginx_server -p 80 --strict --timeout=300 -- \
-      /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/src/init.sh"]
+      wait-for-it -h rinha_backend_ngnix_server -p 80 --strict --timeout=300 -- \
+      ./init.sh"]
