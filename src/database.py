@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-from sqlalchemy.ext.asyncio import create_async_engine
+import redis
+from flask_sqlalchemy import SQLAlchemy
 
 
-engine = create_async_engine(
-    f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:" \
-    f"{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}/" \
-    f"{os.getenv('POSTGRES_DB')}",
-    pool_size=100,
-    echo=True)
+db = SQLAlchemy()
+redis_pool = redis.ConnectionPool(
+    host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"),
+    db=0, max_connections=120)
+redis_client = redis.Redis(connection_pool=redis_pool)

@@ -17,22 +17,19 @@ WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 
 # Install project dependences
 COPY ./requirements.txt /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt
-RUN python -m venv venv
-ENV PATH="/home/rinha_backend/rinha-de-backend-2023-q3-python-flask/venv/bin:$PATH"
+#ENV PATH="/home/rinha_backend/rinha-de-backend-2023-q3-python-flask/venv/bin:$PATH"
+RUN python -m venv venv && . ./venv/bin/activate
 RUN pip install -r /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt
 
 # Copy source code to container
 COPY . /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 
-# Set workdir from src/ and
+# Set workdir from src/
 WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/src
-USER root
-RUN chmod +x init.sh
-USER 1000
 
 # Set entrypoint and run python project
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["wait-for-it -h rinha_backend_redis_db -p 6379 --strict --timeout=300 -- \
       wait-for-it -h rinha_backend_postgres_db -p 5432 --strict --timeout=300 -- \
       wait-for-it -h rinha_backend_ngnix_server -p 80 --strict --timeout=300 -- \
-      ./init.sh"]
+      python init.py uwsgi_instance_a.ini"]
