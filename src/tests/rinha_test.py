@@ -44,42 +44,44 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
+@pytest.mark.order1
 def test_create_record(client):
     for record in records:
         resp = client.post(
             "/pessoas",
             data=json.dumps(record))
         assert resp.status_code == 201
-        resp_json = json.loads(resp.data)
-        created_records_id.append(resp_json.get("response").split("?id=")[1])
+        created_records_id.append(resp.headers.get("location").split("/")[-1])
 
+@pytest.mark.order2
 def test_find_record_by_id(client):
     for record_id in created_records_id:
         resp = client.get(
-            f"/pessoas?id={record_id}")
+            f"/pessoas/{record_id}")
         assert resp.status_code == 200
         resp_json = json.loads(resp.data)
-        terms_find_records.append(resp_json.get("response")[0].get("nome"))
-        terms_find_records.append(
-            resp_json.get("response")[0].get("apelido"))
-        if resp_json.get("response")[0].get("stack"):
-            for stack in resp_json.get("response")[0].get("stack"):
+        terms_find_records.append(resp_json[0].get("nome"))
+        terms_find_records.append(resp_json[0].get("apelido"))
+        if resp_json[0].get("stack"):
+            for stack in resp_json[0].get("stack"):
                 terms_find_records.append(stack)
 
+@pytest.mark.order3
 def test_find_record_by_term(client):
     for term in terms_find_records:
         resp = client.get(
             f"/pessoas?", query_string={"t": term})
         assert resp.status_code == 200
 
+@pytest.mark.order4
 def test_count_total_records(client):
     resp = client.get("/contagem-pessoas")
     assert resp.status_code == 200
-    resp_json = json.loads(resp.data)
-    assert resp_json.get("response") >= len(records)
+    assert int(resp.text) >= len(records)
 
+@pytest.mark.order5
 def test_delete_created_records(client):
     for record_id in created_records_id:
         resp = client.delete(
-            f"/pessoas?id={record_id}")
+            f"/pessoas/{record_id}")
         assert resp.status_code == 200

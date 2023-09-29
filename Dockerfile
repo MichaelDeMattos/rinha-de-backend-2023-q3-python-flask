@@ -2,7 +2,7 @@ FROM python:3.11.4
 
 # Install base dependences
 RUN apt update \
-    && apt install libpq-dev gcc python3-dev iputils-ping wait-for-it python3-venv -y \
+    && apt install libpq-dev gcc python3-dev iputils-ping wait-for-it python3-venv build-essential -y \
     && pip install --upgrade pip \
     && apt-get install tzdata -y
 
@@ -17,9 +17,9 @@ WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 
 # Install project dependences
 COPY ./requirements.txt /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt
-#ENV PATH="/home/rinha_backend/rinha-de-backend-2023-q3-python-flask/venv/bin:$PATH"
+RUN rm -rf venv
 RUN python -m venv venv && . ./venv/bin/activate
-RUN pip install -r /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt
+RUN pip install -r /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/requirements.txt --compile --no-cache-dir
 
 # Copy source code to container
 COPY . /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
@@ -28,8 +28,9 @@ COPY . /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/src
 
 # Set entrypoint and run python project
+EXPOSE 5000
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["wait-for-it -h rinha_backend_redis_db -p 6379 --strict --timeout=300 -- \
       wait-for-it -h rinha_backend_postgres_db -p 5432 --strict --timeout=300 -- \
-      wait-for-it -h rinha_backend_ngnix_server -p 80 --strict --timeout=300 -- \
-      python init.py uwsgi_instance_a.ini"]
+      wait-for-it -h rinha_backend_ngnix_server -p 9999 --strict --timeout=300 -- \
+      python init.py rinha_backend_app:5000"]
