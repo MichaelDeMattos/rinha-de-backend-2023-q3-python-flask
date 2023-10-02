@@ -1,24 +1,55 @@
 version: "3.1"
 
 services:
-  rinha_backend_app:
+  rinha_backend_app_instance_a:
+    container_name: rinha_backend_app_instance_a
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: DockerfileInstanceA
     volumes:
         - .:/home/rinha_backend/rinha-de-backend-2023-q3-python-flask
+    ulimits:
+          nofile:
+              soft: 65536
+              hard: 65536
     deploy:
         resources:
           limits:
-            cpus: '0.25'
-            memory: '0.5GB'
-        replicas: 2
+            cpus: '0.35'
+            memory: '0.75GB'
     networks:
         - rinha_backend_network_default
     environment:
       - PATH=/home/rinha_backend/rinha-de-backend-2023-q3-python-flask/venv/bin:$PATH
     env_file:
       - .env.example
+    ports:
+      - "127.0.0.1:5000:5000"
+
+  rinha_backend_app_instance_b:
+    container_name: rinha_backend_app_instance_b
+    build:
+      context: .
+      dockerfile: DockerfileInstanceB
+    volumes:
+        - .:/home/rinha_backend/rinha-de-backend-2023-q3-python-flask
+    ulimits:
+          nofile:
+              soft: 65536
+              hard: 65536
+    deploy:
+        resources:
+          limits:
+            cpus: '0.35'
+            memory: '0.5GB'
+    networks:
+        - rinha_backend_network_default
+    environment:
+      - PATH=/home/rinha_backend/rinha-de-backend-2023-q3-python-flask/venv/bin:$PATH
+    env_file:
+      - .env.example
+    ports:
+      - "127.0.0.1:5001:5000"
 
   rinha_backend_redis_db:
     container_name: rinha_backend_redis_db
@@ -29,8 +60,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.05'
-          memory: '0.5GB'
+          cpus: '0.10'
+          memory: '0.25GB'
     networks:
       - rinha_backend_network_default
 
@@ -38,19 +69,19 @@ services:
     container_name: rinha_backend_postgres_db
     image: postgres:15
     restart: always
-    command: postgres -c shared_buffers=384MB -c max_connections=100 -c log_min_messages=FATAL
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./postgresql.conf:/docker-entrypoint-initdb.d/postgresql.conf
+    command: postgres -c config_file=/docker-entrypoint-initdb.d/postgresql.conf
     ports:
       - "127.0.0.1:${POSTGRES_PORT}:5432"
     deploy:
       resources:
         limits:
-          cpus: '0.80'
+          cpus: '0.60'
           memory: '1GB'
     healthcheck:
         test: ["CMD-SHELL", "pg_isready --dbname=${POSTGRES_DB} --username=${POSTGRES_USER}"]
@@ -74,7 +105,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.15'
+          cpus: '0.10'
           memory: '0.5GB'
 
 networks:

@@ -28,9 +28,8 @@ COPY . /home/rinha_backend/rinha-de-backend-2023-q3-python-flask
 WORKDIR /home/rinha_backend/rinha-de-backend-2023-q3-python-flask/src
 
 # Set entrypoint and run python project
-EXPOSE 5000
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["wait-for-it -h rinha_backend_redis_db -p 6379 --strict --timeout=300 -- \
       wait-for-it -h rinha_backend_postgres_db -p 5432 --strict --timeout=300 -- \
       wait-for-it -h rinha_backend_ngnix_server -p 9999 --strict --timeout=300 -- \
-      python init.py rinha_backend_app:5000"]
+      python init.py rinha_backend_app_instance_a:5000"]

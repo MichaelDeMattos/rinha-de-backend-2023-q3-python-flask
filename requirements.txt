@@ -11,7 +11,6 @@ flask-redis==0.4.0
 Flask-SQLAlchemy==3.1.1
 gevent==23.9.1
 greenlet==3.0.0rc3
-gunicorn==21.2.0
 hiredis==2.2.3
 importlib-metadata==6.8.0
 importlib-resources==6.1.0
@@ -28,6 +27,7 @@ redis==5.0.0
 SQLAlchemy==2.0.21
 tomli==2.0.1
 typing_extensions==4.8.0
+uWSGI==2.0.22
 Werkzeug==2.3.7
 zipp==3.17.0
 zope.event==5.0

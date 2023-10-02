@@ -40,11 +40,13 @@ finally:
             f" -p {instance.split(':')[1]} --debug",
             shell=True)
     else:
-        subprocess.call(
-            f"python -m gunicorn "
-            f"--workers 3 "
-            f"--worker-class gevent "
-            f"--worker-connections 1000 "
-            f"--bind {instance} "
-            f"app:app",
-            shell=True)
+        host, port = instance.split(":")
+        if port == "5000":
+            subprocess.call(
+                f"uwsgi --http {host}:{port} --master --gevent 10 "
+                f"--http-workers 3 -w app:app --disable-logging", shell=True)
+        else:
+            subprocess.call(
+                f"uwsgi --http {host}:{port} --master --gevent 10 "
+                f"--http-workers 2 -w app:app --disable-logging",
+                shell=True)
