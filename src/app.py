@@ -13,7 +13,7 @@ app.config.from_pyfile("config.py")
 # init flask_sqlalchemy, flask_migrate, flask_redis
 db.init_app(app)
 migrate = Migrate(app, db)
-redis_client.init_app(app)
+redis_client.init_app(app, max_connections=60)
 
 # register blueprints
 app.register_blueprint(api_rinha_backend_bp)

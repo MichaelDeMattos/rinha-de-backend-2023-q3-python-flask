@@ -44,9 +44,10 @@ finally:
         if port == "5000":
             subprocess.call(
                 f"uwsgi --http {host}:{port} --master --gevent 10 "
-                f"--http-workers 3 -w app:app --disable-logging", shell=True)
+                f"--listen 4096 --http-workers 3 -w app:app --disable-logging",
+                shell=True)
         else:
             subprocess.call(
                 f"uwsgi --http {host}:{port} --master --gevent 10 "
-                f"--http-workers 2 -w app:app --disable-logging",
+                f"--listen 4096 --http-workers 2 -w app:app --disable-logging",
                 shell=True)
