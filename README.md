@@ -24,4 +24,44 @@
 
 - **LinkedIn**: [Michael Ortiz](https://www.linkedin.com/in/michael-ortiz-57690a17a/)
 
-Feel free to explore this repository to delve into the exciting world of Python Flask development and the powerful tech stack behind it! 🔥
+## Contributing
+
+🚀 We welcome contributions from the open-source community to make this project even better! Here's how you can contribute:
+
+1. **Fork the Repository**: Click the "Fork" button at the top-right of this repository's page.
+
+2. **Clone Your Fork**: Clone your forked repository to your local machine using the following command:
+
+   ```bash
+   git clone https://github.com/your-username/Rinha-de-Backend.git
+   ```
+
+3. **Create a Branch**: Create a new branch for your feature or bug fix using a descriptive branch name.
+
+   ```bash
+   git checkout -b feature/my-feature
+   ```
+
+4. **Make Changes**: Make your desired changes in the code.
+
+5. **Commit Changes**: Commit your changes with a descriptive commit message.
+
+   ```bash
+   git commit -m "Add my feature: Explain what you did."
+   ```
+
+6. **Push Changes**: Push your changes to your fork on GitHub.
+
+   ```bash
+   git push origin feature/my-feature
+   ```
+
+7. **Open a Pull Request**: Create a new pull request from your forked repository to this repository. Please provide a clear and concise description of your changes.
+
+We will review your contributions and merge them if they align with the project's goals.
+
+Let's collaborate and build amazing things together! 🎉
+
+## License
+
+[MIT License](LICENSE.md)
